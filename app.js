@@ -1,16 +1,31 @@
 const file_inp = document.getElementById('file_inp');
-const upload = document.getElementById('upload');
 const table = document.querySelector(".table");
+const message = document.querySelector(".message");
+const loader = document.querySelector(".custom-loader");
+loader.style.display = 'none';
+
 let formattedData = [];
 
-
-upload.addEventListener('click', () => {
-    PapaParse(file_inp);
+document.getElementById('upload').addEventListener('click', () => {
+    csvFileParser(file_inp);
 });
 
+function showAndHideLoader(status) {
+    loader.style.display = status ? 'flex' : 'none';
+}
 
-function PapaParse(inp_file) {
-    let arrayobj = [];
+
+function csvFileParser(inp_file) {
+     if (!inp_file.files.length) {
+        message.innerText = 'No File Selected !!';
+        return;
+    }
+    if ( inp_file.files[0].type === 'type/csv') {
+         message.innerText = 'Only CSV files are allowed !!';
+        return;
+    }
+    showAndHideLoader(true);
+    console.log(inp_file.files[0]);
     Papa.parse(
         inp_file.files[0],
         {
@@ -18,57 +33,55 @@ function PapaParse(inp_file) {
             header: true,
             skipEmptyLines: true,
             complete: function (results) {
-                arrayobj = results.data;
-                proceedWithData(arrayobj);
+                proceedWithData(results.data);
             }
         }
     );
 
 }
 
-function showInPage(jsonData) {
-    let myWorkSheet = XLSX.utils.json_to_sheet(jsonData);
+function showFormattedDataInPage(jsonData) {
+    const myWorkSheet = XLSX.utils.json_to_sheet(jsonData);
 
     // showing in html
-    let html = XLSX.utils.sheet_to_html(myWorkSheet);
+    const html = XLSX.utils.sheet_to_html(myWorkSheet);
+    showAndHideLoader(false);
     table.innerHTML = `
                     ${html}`;
 }
 
 function exportWorksheet(jsonObject) {
-    var myFile = "myFile.xlsx";
-    var myWorkSheet = XLSX.utils.json_to_sheet(jsonObject);
-    var myWorkBook = XLSX.utils.book_new();
-
-    // showing in html
-    let html = XLSX.utils.sheet_to_html(myWorkSheet);
-    table.innerHTML = `
-                    ${html}`;
+    const myWorkSheet = XLSX.utils.json_to_sheet(jsonObject);
+    const myWorkBook = XLSX.utils.book_new();
 
     XLSX.utils.book_append_sheet(myWorkBook, myWorkSheet, "myWorkSheet");
-    XLSX.writeFile(myWorkBook, myFile);
+    XLSX.writeFile(myWorkBook, "myTimeLog.xlsx");
 }
 
-
-// display function
-const tbody = document.getElementById('tbody');
 
 async function proceedWithData(excelData) {
+    if (!excelData.length) {
+         showAndHideLoader(false);
+         message.innerText = 'Empty file !!';
+        return;
+    }
     formattedData = await (Object.values(excelData).map((d, index) => {
+        const { Project, User, Task, ...neededData } = d;
         return {
             'Serial No': index + 1,
-            'Date': d.date,
-            'Ticket #': d.Task.substring(d.Task.indexOf('PRTH')),
-            ...d,
+            'Date': neededData?.Date || neededData?.date || 'Not Found',
+            'Ticket #': Task?.substring(Task?.indexOf('PRTH')),
+            'Ticket Title': Task || 'No Data Found',
+            ...neededData,
         }
     }));
-    showInPage(formattedData);
+    showFormattedDataInPage(formattedData);
 }
 
-function download() {
+function downloadExcelFile() {
     if (formattedData.length) {
         exportWorksheet(formattedData);
     } else {
-        console.error('No Data');
+        message.innerText = 'Please select a file again, to continue ...';
     }
 }
