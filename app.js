@@ -20,12 +20,11 @@ function csvFileParser(inp_file) {
         message.innerText = 'No File Selected !!';
         return;
     }
-    if ( inp_file.files[0].type === 'type/csv') {
-         message.innerText = 'Only CSV files are allowed !!';
+    if (inp_file.files[0].name.split('.').pop() !== 'csv') {
+        message.innerText = 'Only CSV files are allowed !!';
         return;
     }
     showAndHideLoader(true);
-    console.log(inp_file.files[0]);
     Papa.parse(
         inp_file.files[0],
         {
