@@ -2,21 +2,40 @@ const file_inp = document.getElementById('file_inp');
 const table = document.querySelector(".table");
 const message = document.querySelector(".message");
 const loader = document.querySelector(".custom-loader");
+const copyBtn = document.querySelector(".copy");
 loader.style.display = 'none';
 
 let formattedData = [];
 
+function showAndHideLoader(status) {
+    loader.style.display = status ? 'flex' : 'none';
+}
 document.getElementById('upload').addEventListener('click', () => {
     csvFileParser(file_inp);
 });
 
-function showAndHideLoader(status) {
-    loader.style.display = status ? 'flex' : 'none';
-}
+copyBtn.addEventListener('click', () => {
+    if (!formattedData.length) {
+        message.innerText = 'Nothing to Copy, please upload a excel to copy !!';
+        return;
+    }
+    // create a Range object
+    var range = document.createRange();
+    // set the Node to select the "range"
+    range.selectNode(table);
+    // add the Range to the set of window selections
+    window.getSelection().addRange(range);
+
+    // execute 'copy', can't 'cut' in this case
+    document.execCommand('copy');
+    copyBtn.getElementsByTagName('span')[0].innerText = 'Copied'
+});
+
+
 
 
 function csvFileParser(inp_file) {
-     if (!inp_file.files.length) {
+    if (!inp_file.files.length) {
         message.innerText = 'No File Selected !!';
         return;
     }
@@ -60,10 +79,11 @@ function exportWorksheet(jsonObject) {
 
 async function proceedWithData(excelData) {
     if (!excelData.length) {
-         showAndHideLoader(false);
-         message.innerText = 'Empty file !!';
+        showAndHideLoader(false);
+        message.innerText = 'Empty file !!';
         return;
     }
+        
     formattedData = await (Object.values(excelData).map((d, index) => {
         const { Project, User, Task, ...neededData } = d;
         return {
@@ -75,6 +95,7 @@ async function proceedWithData(excelData) {
             ...neededData,
         }
     }));
+
     showFormattedDataInPage(formattedData);
 }
 
@@ -85,3 +106,5 @@ function downloadExcelFile() {
         message.innerText = 'Please select a file again, to continue ...';
     }
 }
+
+

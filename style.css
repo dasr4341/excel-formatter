@@ -32,3 +32,36 @@ th {
     border: 1px solid black;
     padding: 0.5rem;
 }
+.btn-grp{
+    display: flex;
+    align-items: center; 
+    
+}
+.btn-grp > button, a {
+    margin: 0 2px;
+}
+.copy-btn {
+    overflow-x: auto;
+    background-color: rgb(74, 74, 206);
+    border-radius: 5px;
+    padding: 6px 15px;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+}
+
+.copy-btn:hover {
+    background-color: rgb(18, 18, 110);
+}
+
+.copy-btn > span {
+    margin-right: 8px;
+}
+
+.copy-btn > img {
+  
+    width: 20px;
+    height: 20px;
+    color: white;
+}
