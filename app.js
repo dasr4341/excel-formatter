@@ -71,6 +71,7 @@ async function proceedWithData(excelData) {
             'Date': neededData?.Date || neededData?.date || 'Not Found',
             'Ticket #': Task?.substring(Task?.indexOf('PRTH')),
             'Ticket Title': Task || 'No Data Found',
+            'Status': '',
             ...neededData,
         }
     }));
