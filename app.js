@@ -1,48 +1,90 @@
-const file_inp = document.getElementById('file_inp');
-const table = document.querySelector(".table");
+const fileInput = document.querySelector('.file-input');
+const tableHeader = document.querySelector(".preview-header-section");
+const table = document.querySelector(".table-to-copy");
 const message = document.querySelector(".message");
 const loader = document.querySelector(".custom-loader");
-const copyBtn = document.querySelector(".copy");
+const copyBtn = document.querySelector(".copy-btn");
+const fileUploadBanner = document.querySelector(".file-upload-banner").getElementsByTagName('span')[0];
+
 loader.style.display = 'none';
+message.style.display = 'none';
+tableHeader.style.display = 'none';
 
 let formattedData = [];
+
+function showErrorMessage(errTxt) {
+    message.innerText = errTxt;
+    message.style.display = 'block';
+}
+
+function downloadExcelFile() {
+    if (formattedData.length) {
+        exportWorksheet(formattedData);
+    } else {
+        showErrorMessage('Please select a file, to continue ...');
+    }
+}
 
 function showAndHideLoader(status) {
     loader.style.display = status ? 'flex' : 'none';
 }
+
+document.querySelector('.file-upload-banner').addEventListener('click', () => {
+    fileInput.click();
+})
+
+fileInput.addEventListener('change', (e) => {
+    console.log(fileUploadBanner);
+    if (!!e.target.files.length) {
+        fileUploadBanner.innerHTML = e.target.files[0].name;
+    }
+})
+
 document.getElementById('upload').addEventListener('click', () => {
-    csvFileParser(file_inp);
+    csvFileParser(fileInput);
 });
+
+document.querySelector('.download-btn').addEventListener('click', downloadExcelFile)
 
 copyBtn.addEventListener('click', () => {
     if (!formattedData.length) {
-        message.innerText = 'Nothing to Copy, please upload a excel to copy !!';
+        showErrorMessage('Nothing to Copy, please upload a excel to copy !!');
         return;
     }
+
     // create a Range object
-    var range = document.createRange();
+    const range = document.createRange();
     // set the Node to select the "range"
     range.selectNode(table);
+
     // add the Range to the set of window selections
     window.getSelection().addRange(range);
 
     // execute 'copy', can't 'cut' in this case
     document.execCommand('copy');
-    copyBtn.getElementsByTagName('span')[0].innerText = 'Copied'
+    copyBtn.classList.add("active");
+    // copyBtn.getElementsByTagName('span')[0].innerText = 'Copied'
+    window.getSelection().removeAllRanges();
+    setTimeout(() => {
+        copyBtn.classList.remove("active");
+    }, 500)
 });
 
-
+document.querySelector('.theme-toggler').addEventListener('click', () => {
+    document.body.classList.toggle('dark');
+})
 
 
 function csvFileParser(inp_file) {
     if (!inp_file.files.length) {
-        message.innerText = 'No File Selected !!';
+        showErrorMessage('No File Selected !!');
         return;
     }
     if (inp_file.files[0].name.split('.').pop() !== 'csv') {
-        message.innerText = 'Only CSV files are allowed !!';
+        showErrorMessage('Only CSV files are allowed !!')
         return;
     }
+
     showAndHideLoader(true);
     Papa.parse(
         inp_file.files[0],
@@ -59,6 +101,7 @@ function csvFileParser(inp_file) {
 }
 
 function showFormattedDataInPage(jsonData) {
+    tableHeader.style.display = 'flex';
     const myWorkSheet = XLSX.utils.json_to_sheet(jsonData);
 
     // showing in html
@@ -80,10 +123,12 @@ function exportWorksheet(jsonObject) {
 async function proceedWithData(excelData) {
     if (!excelData.length) {
         showAndHideLoader(false);
-        message.innerText = 'Empty file !!';
+        table.innerHTML = '';
+        formattedData = [];
+        showErrorMessage('Empty file !!');
         return;
     }
-        
+
     formattedData = await (Object.values(excelData).map((d, index) => {
         const { Project, User, Task, ...neededData } = d;
         return {
@@ -98,13 +143,3 @@ async function proceedWithData(excelData) {
 
     showFormattedDataInPage(formattedData);
 }
-
-function downloadExcelFile() {
-    if (formattedData.length) {
-        exportWorksheet(formattedData);
-    } else {
-        message.innerText = 'Please select a file again, to continue ...';
-    }
-}
-
-
