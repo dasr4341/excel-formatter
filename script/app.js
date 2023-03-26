@@ -34,9 +34,9 @@ document.querySelector('.file-upload-banner').addEventListener('click', () => {
 })
 
 fileInput.addEventListener('change', (e) => {
-    console.log(fileUploadBanner);
     if (!!e.target.files.length) {
         fileUploadBanner.innerHTML = e.target.files[0].name;
+        message.style.display = 'none';
     }
 })
 
@@ -128,18 +128,33 @@ async function proceedWithData(excelData) {
         showErrorMessage('Empty file !!');
         return;
     }
-
-    formattedData = await (Object.values(excelData).map((d, index) => {
+    formattedData = [];
+    const jsonData = await (Object.values(excelData).filter(d => d.Project.toLowerCase().includes('jira') ).map((d, index) => {
         const { Project, User, Task, ...neededData } = d;
-        return {
-            'Serial No': index + 1,
-            'Date': neededData?.Date || neededData?.date || 'Not Found',
-            'Ticket #': Task?.substring(Task?.indexOf('PRTH')),
-            'Ticket Title': Task || 'No Data Found',
-            'Status': '',
-            ...neededData,
-        }
+            return {
+                'Serial No': index + 1,
+                'Date': neededData?.Date || neededData?.date || 'Not Found',
+                'Ticket #': Task?.substring(Task?.indexOf('PRTH')),
+                'Ticket Title': Task || 'No Data Found',
+                'Status': '',
+                ...neededData,
+            };
     }));
-
+ 
+    let prevDate = '';
+    jsonData.forEach(d => {
+        if (prevDate !== '' && d?.Date !== prevDate) {
+            formattedData.push({
+                'HRS (Digital)': '',
+                'Date': '',
+                'Serial No': '',
+                'Status': '',
+                'Ticket #': '',
+                'Ticket Title': ''
+            });
+        }
+        formattedData.push(d);
+        prevDate = d.Date;
+    });
     showFormattedDataInPage(formattedData);
 }
