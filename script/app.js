@@ -156,5 +156,5 @@ async function proceedWithData(excelData) {
         formattedData.push(d);
         prevDate = d.Date;
     });
-    showFormattedDataInPage(formattedData);
+    showFormattedDataInPage(jsonData);
 }
