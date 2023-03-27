@@ -12,6 +12,8 @@ tableHeader.style.display = 'none';
 
 let formattedData = [];
 
+
+// ------------------------ helper starts -------------------------
 function showErrorMessage(errTxt) {
     message.innerText = errTxt;
     message.style.display = 'block';
@@ -29,6 +31,32 @@ function showAndHideLoader(status) {
     loader.style.display = status ? 'flex' : 'none';
 }
 
+function showFormattedDataInPage(jsonData) {
+    tableHeader.style.display = 'flex';
+    const myWorkSheet = XLSX.utils.json_to_sheet(jsonData);
+
+    // showing in html
+    const html = XLSX.utils.sheet_to_html(myWorkSheet);
+    showAndHideLoader(false);
+    table.innerHTML = `
+                    ${html}`;
+}
+
+function exportWorksheet(jsonObject) {
+    const myWorkSheet = XLSX.utils.json_to_sheet(jsonObject);
+    const myWorkBook = XLSX.utils.book_new();
+
+    XLSX.utils.book_append_sheet(myWorkBook, myWorkSheet, "myWorkSheet");
+    XLSX.writeFile(myWorkBook, "myTimeLog.xlsx");
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark');
+}
+//  ---------------------------- helper ends--------------------------------
+
+// ----------------------------- event listener start --------------------
+
 document.querySelector('.file-upload-banner').addEventListener('click', () => {
     fileInput.click();
 })
@@ -45,6 +73,7 @@ document.getElementById('upload').addEventListener('click', () => {
 });
 
 document.querySelector('.download-btn').addEventListener('click', downloadExcelFile)
+document.querySelector('.theme-toggler').addEventListener('click', toggleTheme)
 
 copyBtn.addEventListener('click', () => {
     if (!formattedData.length) {
@@ -70,9 +99,16 @@ copyBtn.addEventListener('click', () => {
     }, 500)
 });
 
-document.querySelector('.theme-toggler').addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-})
+(function () {
+    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+    if (darkThemeMq.matches) {
+    // Theme set to dark.
+        toggleTheme();
+    } 
+})()
+
+// ----------------------------- event listener ends --------------------
+
 
 
 function csvFileParser(inp_file) {
@@ -99,26 +135,6 @@ function csvFileParser(inp_file) {
     );
 
 }
-
-function showFormattedDataInPage(jsonData) {
-    tableHeader.style.display = 'flex';
-    const myWorkSheet = XLSX.utils.json_to_sheet(jsonData);
-
-    // showing in html
-    const html = XLSX.utils.sheet_to_html(myWorkSheet);
-    showAndHideLoader(false);
-    table.innerHTML = `
-                    ${html}`;
-}
-
-function exportWorksheet(jsonObject) {
-    const myWorkSheet = XLSX.utils.json_to_sheet(jsonObject);
-    const myWorkBook = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(myWorkBook, myWorkSheet, "myWorkSheet");
-    XLSX.writeFile(myWorkBook, "myTimeLog.xlsx");
-}
-
 
 async function proceedWithData(excelData) {
     if (!excelData.length) {
