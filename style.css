@@ -295,14 +295,18 @@ div {
 
 .git-hub-logo>img {
     cursor: pointer;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     float: right;
     justify-self: flex-end;
     align-self: flex-end;
-    background-color: #63ed01;
     padding: 5px;
+    background-color: var(--theme-light-orange);
     border-radius: 25px;
+}
+
+.dark .git-hub-logo>img {
+    background-color: #63ed01;
     -webkit-animation: glow 1s ease-in-out infinite alternate;
     -moz-animation: glow 1s ease-in-out infinite alternate;
     animation: glow 1s ease-in-out infinite alternate;
