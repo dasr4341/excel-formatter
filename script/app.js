@@ -102,9 +102,9 @@ copyBtn.addEventListener('click', () => {
 (function () {
     const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
     if (darkThemeMq.matches) {
-    // Theme set to dark.
+        // Theme set to dark.
         toggleTheme();
-    } 
+    }
 })()
 
 // ----------------------------- event listener ends --------------------
@@ -145,18 +145,106 @@ async function proceedWithData(excelData) {
         return;
     }
     formattedData = [];
-    const jsonData = await (Object.values(excelData).filter(d => d.Project.toLowerCase().includes('jira') ).map((d, index) => {
+    const jsonData = await (Object.values(excelData).filter(d => d.Project.toLowerCase().includes('jira')).map((d, index) => {
         const { Project, User, Task, ...neededData } = d;
-            return {
-                'Serial No': index + 1,
-                'Date': neededData?.Date || neededData?.date || 'Not Found',
-                'Ticket #': Task?.substring(Task?.indexOf('PRTH')),
-                'Ticket Title': Task || 'No Data Found',
-                'Status': '',
-                ...neededData,
-            };
+
+        // task date
+        const date = (neededData?.Date || neededData?.date) ? new Date(neededData?.Date || neededData?.date) : null;
+        const formattedDate = date ? `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}` : 'Not Found';
+
+        const hrs = neededData['HRS (Digital)'] ? neededData['HRS (Digital)'].split(':') : null;
+
+        return {
+            'Serial No': index + 1,
+            'Date': formattedDate,
+            'Ticket #': Task?.substring(Task?.indexOf('PRTH')),
+            'Ticket Title': Task || 'No Data Found',
+            'Status': '',
+            // ...neededData
+            'HRS (Digital)': hrs ? `${hrs[0]}:${hrs[1]}` : 'Not Found',
+        };
     }));
- 
+
+    let prevDate = '';
+    jsonData.forEach((d, index) => {
+
+
+        // const hrs = d['HRS (Digital)'] ? d['HRS (Digital)'].split(':') : null;
+        // TODO : hour
+        // if (!!hrs && hrs[0] < 1 && prevDate !== '' && prevDate === d.Date && !!index) {
+        //     console.log(formattedData, d, hrs, formattedData[index - 1], index);
+        //     const obj = formattedData[index - 1];
+        //     console.log(obj);
+        //     const currentTaskHrs = obj['HRS (Digital)'] ? obj['HRS (Digital)'].split(':') : [0, 0];
+
+        //     let currentHour = Number(currentTaskHrs[0]) + Number(hrs[0]);
+        //     let currentMinutes = Number(currentTaskHrs[1]) + Number(hrs[1]);
+
+
+        //     if (currentMinutes >= 60) {
+        //         const h = Math.round(currentMinutes / 60);
+        //         currentHour += h;
+        //         currentMinutes  = 0;
+        //     }
+
+        //     obj['Ticket #'] = `${obj['Ticket #']}, ${d['Ticket #']}`
+        //     obj['Ticket Title'] = `${obj['Ticket Title']}, ${d['Ticket Title']}`
+        //     obj['HRS (Digital)'] = `${currentHour}:${currentMinutes}`
+
+        //     return;
+        // } 
+        if (prevDate !== '' && d?.Date !== prevDate) {
+            formattedData.push({
+                'HRS (Digital)': '',
+                'Date': '',
+                'Serial No': '',
+                'Status': '',
+                'Ticket #': '',
+                'Ticket Title': ''
+            });
+        }
+
+        if (prevDate !== '' && d?.Date === prevDate) {
+            formattedData.push({
+                'Serial No': d['Serial No'],
+                'Date': '',
+                'Ticket #': d['Ticket #'],
+                'Ticket Title': d['Ticket Title'],
+                'Status': d['Status'],
+                'HRS (Digital)': d['HRS (Digital)'],
+            });
+        } else {
+            formattedData.push(d);
+        }
+
+        prevDate = d.Date;
+    });
+
+    showFormattedDataInPage(formattedData);
+}
+
+// old template format
+async function proceedWithDataOldFormat(excelData) {
+    if (!excelData.length) {
+        showAndHideLoader(false);
+        table.innerHTML = '';
+        formattedData = [];
+        showErrorMessage('Empty file !!');
+        return;
+    }
+    formattedData = [];
+    const jsonData = await (Object.values(excelData).filter(d => d.Project.toLowerCase().includes('jira')).map((d, index) => {
+        const { Project, User, Task, ...neededData } = d;
+        return {
+            'Serial No': index + 1,
+            'Date': neededData?.Date || neededData?.date || 'Not Found',
+            'Ticket #': Task?.substring(Task?.indexOf('PRTH')),
+            'Ticket Title': Task || 'No Data Found',
+            'Status': '',
+            ...neededData,
+        };
+    }));
+
     let prevDate = '';
     jsonData.forEach(d => {
         if (prevDate !== '' && d?.Date !== prevDate) {
@@ -174,3 +262,16 @@ async function proceedWithData(excelData) {
     });
     showFormattedDataInPage(jsonData);
 }
+
+
+Papa.parse(
+    './excel.csv',
+    {
+        download: true,
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+            proceedWithData(results.data);
+        }
+    }
+);
