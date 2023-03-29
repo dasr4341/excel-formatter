@@ -136,7 +136,83 @@ function csvFileParser(inp_file) {
 
 }
 
-async function proceedWithData(excelData) {
+function formatDataAsPerRequirement(data) {
+    // ------------------------------------------------------- REQUIREMENT -------------------------------------
+    // Log sheet format
+    // 1. Date has to be on mm/dd/yyyy format
+    // 2. The has to be in hh:mm format
+    // 3. 1 empty row after each date
+    // 4. Please don’t have duplicate dates
+    // 5. No need to repeat date if the above feature is the same date (no blank rows between items of the same date)
+    // 6. Each day has to be either 7+ hours or 3+ hours. 
+    // 7. Hours can’t exceed 9 for any day
+    // 8. Please don’t have rows with items less then 1 hr (club the points in the same row if necessary)
+    // ------------------------------------------------------- REQUIREMENT -------------------------------------
+    let output = [];
+    let prevDate = '';
+    let prevIndex = 0;
+    data.forEach((d, index) => {
+
+        const currentTaskTime = d['HRS (Digital)'] ? d['HRS (Digital)'].split(':') : null;
+
+        if (prevDate !== '' && d?.Date !== prevDate) {
+            output.push({
+                'HRS (Digital)': '',
+                'Date': '',
+                'Serial No': '',
+                'Status': '',
+                'Ticket #': '',
+                'Ticket Title': ''
+            });
+        }
+
+        if (prevDate !== '' && prevDate === d.Date && !!currentTaskTime && currentTaskTime[0] < 1) {
+            const prevTaskData = data[prevIndex];
+           
+            console.log(prevTaskData);
+            const prevTaskTime = prevTaskData['HRS (Digital)'] ? prevTaskData['HRS (Digital)'].split(':') : [0, 0];
+
+            let updatedHours = Number(prevTaskTime[0]) + Number(currentTaskTime[0]);
+            let updatedMinutes = Number(prevTaskTime[1]) + Number(currentTaskTime[1]);
+
+
+            if (updatedMinutes >= 60 && updatedMinutes % 60 === 0) {
+                updatedHours += Math.round(updatedMinutes / 60);
+                updatedMinutes = 0;
+            } else {
+                updatedHours += 1;
+                updatedMinutes = updatedMinutes % 60
+            }
+
+            prevTaskData['Ticket #'] = `${prevTaskData['Ticket #']}, ${d['Ticket #']}`
+            prevTaskData['Ticket Title'] = `${prevTaskData['Ticket Title']}, ${d['Ticket Title']}`
+            prevTaskData['HRS (Digital)'] = `${updatedHours < 10 ? '0' + updatedHours : updatedHours}:${updatedMinutes < 10 ? '0' + updatedMinutes : updatedMinutes}`
+
+            data[index - 1] = prevTaskData;
+
+        } else if (prevDate !== '' && d?.Date === prevDate) {
+            output.push({
+                'Serial No': d['Serial No'],
+                'Date': '',
+                'Ticket #': d['Ticket #'],
+                'Ticket Title': d['Ticket Title'],
+                'Status': d['Status'],
+                'HRS (Digital)': d['HRS (Digital)'],
+            });
+            prevIndex = index;
+
+        } else {
+            output.push(d);
+            prevIndex = index;
+        }
+
+        prevDate = d.Date;
+    });
+    return output;
+}
+
+
+function proceedWithData(excelData) {
     if (!excelData.length) {
         showAndHideLoader(false);
         table.innerHTML = '';
@@ -144,14 +220,14 @@ async function proceedWithData(excelData) {
         showErrorMessage('Empty file !!');
         return;
     }
-    formattedData = [];
-    const jsonData = await (Object.values(excelData).filter(d => d.Project.toLowerCase().includes('jira')).map((d, index) => {
+    const jsonData = (Object.values(excelData).filter(d => d.Project.toLowerCase().includes('jira')).map((d, index) => {
         const { Project, User, Task, ...neededData } = d;
 
-        // task date
+        // changed to mm/dd/yyyy
         const date = (neededData?.Date || neededData?.date) ? new Date(neededData?.Date || neededData?.date) : null;
-        const formattedDate = date ? `${date.getMonth()}/${date.getDate()}/${date.getFullYear()}` : 'Not Found';
+        const formattedDate = date ? `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}` : 'Not Found';
 
+        // changed to hh:mm format time
         const hrs = neededData['HRS (Digital)'] ? neededData['HRS (Digital)'].split(':') : null;
 
         return {
@@ -164,64 +240,13 @@ async function proceedWithData(excelData) {
             'HRS (Digital)': hrs ? `${hrs[0]}:${hrs[1]}` : 'Not Found',
         };
     }));
-
-    let prevDate = '';
-    jsonData.forEach((d, index) => {
-
-
-        // const hrs = d['HRS (Digital)'] ? d['HRS (Digital)'].split(':') : null;
-        // TODO : hour
-        // if (!!hrs && hrs[0] < 1 && prevDate !== '' && prevDate === d.Date && !!index) {
-        //     console.log(formattedData, d, hrs, formattedData[index - 1], index);
-        //     const obj = formattedData[index - 1];
-        //     console.log(obj);
-        //     const currentTaskHrs = obj['HRS (Digital)'] ? obj['HRS (Digital)'].split(':') : [0, 0];
-
-        //     let currentHour = Number(currentTaskHrs[0]) + Number(hrs[0]);
-        //     let currentMinutes = Number(currentTaskHrs[1]) + Number(hrs[1]);
-
-
-        //     if (currentMinutes >= 60) {
-        //         const h = Math.round(currentMinutes / 60);
-        //         currentHour += h;
-        //         currentMinutes  = 0;
-        //     }
-
-        //     obj['Ticket #'] = `${obj['Ticket #']}, ${d['Ticket #']}`
-        //     obj['Ticket Title'] = `${obj['Ticket Title']}, ${d['Ticket Title']}`
-        //     obj['HRS (Digital)'] = `${currentHour}:${currentMinutes}`
-
-        //     return;
-        // } 
-        if (prevDate !== '' && d?.Date !== prevDate) {
-            formattedData.push({
-                'HRS (Digital)': '',
-                'Date': '',
-                'Serial No': '',
-                'Status': '',
-                'Ticket #': '',
-                'Ticket Title': ''
-            });
-        }
-
-        if (prevDate !== '' && d?.Date === prevDate) {
-            formattedData.push({
-                'Serial No': d['Serial No'],
-                'Date': '',
-                'Ticket #': d['Ticket #'],
-                'Ticket Title': d['Ticket Title'],
-                'Status': d['Status'],
-                'HRS (Digital)': d['HRS (Digital)'],
-            });
-        } else {
-            formattedData.push(d);
-        }
-
-        prevDate = d.Date;
-    });
+    console.log(jsonData);
+    formattedData = formatDataAsPerRequirement(jsonData);
 
     showFormattedDataInPage(formattedData);
 }
+
+
 
 // old template format
 async function proceedWithDataOldFormat(excelData) {
@@ -262,16 +287,3 @@ async function proceedWithDataOldFormat(excelData) {
     });
     showFormattedDataInPage(jsonData);
 }
-
-
-Papa.parse(
-    './excel.csv',
-    {
-        download: true,
-        header: true,
-        skipEmptyLines: true,
-        complete: function (results) {
-            proceedWithData(results.data);
-        }
-    }
-);
