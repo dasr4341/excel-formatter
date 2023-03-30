@@ -169,19 +169,18 @@ function formatDataAsPerRequirement(data) {
         if (prevDate !== '' && prevDate === d.Date && !!currentTaskTime && currentTaskTime[0] < 1) {
             const prevTaskData = data[prevIndex];
            
-            console.log(prevTaskData);
+            // console.log(prevTaskData);
             const prevTaskTime = prevTaskData['HRS (Digital)'] ? prevTaskData['HRS (Digital)'].split(':') : [0, 0];
 
             let updatedHours = Number(prevTaskTime[0]) + Number(currentTaskTime[0]);
             let updatedMinutes = Number(prevTaskTime[1]) + Number(currentTaskTime[1]);
+            if (prevDate === '2/28/2023') {
+                console.log(updatedMinutes, updatedHours, prevTaskData);
+            }
 
-
-            if (updatedMinutes >= 60 && updatedMinutes % 60 === 0) {
-                updatedHours += Math.round(updatedMinutes / 60);
-                updatedMinutes = 0;
-            } else {
-                updatedHours += 1;
-                updatedMinutes = updatedMinutes % 60
+            if (updatedMinutes > 60 ) {
+                updatedHours += Math.floor(updatedMinutes / 60);
+                updatedMinutes = updatedMinutes % 60;
             }
 
             prevTaskData['Ticket #'] = `${prevTaskData['Ticket #']}, ${d['Ticket #']}`
@@ -240,10 +239,10 @@ function proceedWithData(excelData) {
             'HRS (Digital)': hrs ? `${hrs[0]}:${hrs[1]}` : 'Not Found',
         };
     }));
-    console.log(jsonData);
+    // console.log(jsonData);
     formattedData = formatDataAsPerRequirement(jsonData);
 
-    showFormattedDataInPage(formattedData);
+    showFormattedDataInPage(jsonData);
 }
 
 
