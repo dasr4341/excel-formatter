@@ -239,10 +239,10 @@ function proceedWithData(excelData) {
             'HRS (Digital)': hrs ? `${hrs[0]}:${hrs[1]}` : 'Not Found',
         };
     }));
-    // console.log(jsonData);
-    formattedData = formatDataAsPerRequirement(jsonData);
+    formattedData = [];
 
-    showFormattedDataInPage(jsonData);
+    formattedData = formatDataAsPerRequirement(jsonData);
+    showFormattedDataInPage(formattedData);
 }
 
 
