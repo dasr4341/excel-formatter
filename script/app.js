@@ -169,14 +169,10 @@ function formatDataAsPerRequirement(data) {
         if (prevDate !== '' && prevDate === d.Date && !!currentTaskTime && currentTaskTime[0] < 1) {
             const prevTaskData = data[prevIndex];
            
-            // console.log(prevTaskData);
             const prevTaskTime = prevTaskData['HRS (Digital)'] ? prevTaskData['HRS (Digital)'].split(':') : [0, 0];
 
             let updatedHours = Number(prevTaskTime[0]) + Number(currentTaskTime[0]);
             let updatedMinutes = Number(prevTaskTime[1]) + Number(currentTaskTime[1]);
-            if (prevDate === '2/28/2023') {
-                console.log(updatedMinutes, updatedHours, prevTaskData);
-            }
 
             if (updatedMinutes > 60 ) {
                 updatedHours += Math.floor(updatedMinutes / 60);
