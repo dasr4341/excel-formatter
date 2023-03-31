@@ -183,7 +183,7 @@ function formatDataAsPerRequirement(data) {
             prevTaskData['Ticket Title'] = `${prevTaskData['Ticket Title']}, ${d['Ticket Title']}`
             prevTaskData['HRS (Digital)'] = `${updatedHours < 10 ? '0' + updatedHours : updatedHours}:${updatedMinutes < 10 ? '0' + updatedMinutes : updatedMinutes}`
 
-            data[index - 1] = prevTaskData;
+            data[prevIndex] = prevTaskData;
 
         } else if (prevDate !== '' && d?.Date === prevDate) {
             output.push({
