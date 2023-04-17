@@ -136,7 +136,7 @@ function csvFileParser(inp_file) {
 
 }
 
-function formatDataAsPerRequirement(data) {
+async function formatDataAsPerRequirement(data) {
     // ------------------------------------------------------- REQUIREMENT -------------------------------------
     // Log sheet format
     // 1. Date has to be on mm/dd/yyyy format
@@ -152,6 +152,9 @@ function formatDataAsPerRequirement(data) {
     let prevDate = '';
     let prevIndex = 0;
     data.forEach((d, index) => {
+        if (prevIndex >= output.length) {
+            prevIndex = output.length - 1;
+        }
 
         const currentTaskTime = d['HRS (Digital)'] ? d['HRS (Digital)'].split(':') : null;
 
@@ -167,8 +170,7 @@ function formatDataAsPerRequirement(data) {
         }
 
         if (prevDate !== '' && prevDate === d.Date && !!currentTaskTime && currentTaskTime[0] < 1) {
-            const prevTaskData = data[prevIndex];
-           
+            const prevTaskData = output[prevIndex];
             const prevTaskTime = prevTaskData['HRS (Digital)'] ? prevTaskData['HRS (Digital)'].split(':') : [0, 0];
 
             let updatedHours = Number(prevTaskTime[0]) + Number(currentTaskTime[0]);
@@ -183,7 +185,7 @@ function formatDataAsPerRequirement(data) {
             prevTaskData['Ticket Title'] = `${prevTaskData['Ticket Title']}, ${d['Ticket Title']}`
             prevTaskData['HRS (Digital)'] = `${updatedHours < 10 ? '0' + updatedHours : updatedHours}:${updatedMinutes < 10 ? '0' + updatedMinutes : updatedMinutes}`
 
-            data[index - 1] = prevTaskData;
+            output[prevIndex] = prevTaskData;
 
         } else if (prevDate !== '' && d?.Date === prevDate) {
             output.push({
@@ -195,19 +197,17 @@ function formatDataAsPerRequirement(data) {
                 'HRS (Digital)': d['HRS (Digital)'],
             });
             prevIndex = index;
-
         } else {
             output.push(d);
             prevIndex = index;
         }
-
         prevDate = d.Date;
     });
     return output;
 }
 
 
-function proceedWithData(excelData) {
+async function proceedWithData(excelData) {
     if (!excelData.length) {
         showAndHideLoader(false);
         table.innerHTML = '';
@@ -237,7 +237,7 @@ function proceedWithData(excelData) {
     }));
     formattedData = [];
 
-    formattedData = formatDataAsPerRequirement(jsonData);
+    formattedData = await formatDataAsPerRequirement(jsonData);
     showFormattedDataInPage(formattedData);
 }
 
