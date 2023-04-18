@@ -98,10 +98,10 @@ document.getElementById('upload').addEventListener('click', () => {
 
 document.querySelector('.download-btn').addEventListener('click', downloadExcelFile)
 document.querySelector('.theme-toggler').addEventListener('click', toggleTheme)
-document.querySelector('.excel-preview').addEventListener('click', () => {
-    excelPreviewSectionToggleVisibility();
-    previewInExcelViewer(formattedData);
-})
+// document.querySelector('.excel-preview').addEventListener('click', () => {
+//     excelPreviewSectionToggleVisibility();
+//     previewInExcelViewer(formattedData);
+// })
 document.querySelector('.excel-preview-close').addEventListener('click', excelPreviewSectionToggleVisibility)
 document.querySelector('.excel-preview-save').addEventListener('click', () => {
     const d = handsontableObj.getData();
@@ -321,15 +321,3 @@ async function proceedWithDataOldFormat(excelData) {
     });
     showFormattedDataInPage(jsonData);
 }
-
- Papa.parse(
-        './excel.csv',
-        {
-            download: true,
-            header: true,
-            skipEmptyLines: true,
-            complete: function (results) {
-                proceedWithData(results.data);
-            }
-        }
-    );
