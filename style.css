@@ -54,6 +54,7 @@ body.dark {
 }
 
 .file-upload-banner {
+    text-align: center;
     max-width: 600px;
     margin: auto;
     width: 80%;
@@ -165,7 +166,15 @@ div {
 
 .copy-btn>img {
     width: 20px;
-    height: 15px;
+    height: 18px;
+}
+
+.excel-preview{
+    background-color: green;
+}
+.excel-preview > img{
+      width: 28px;
+    height: 18px;
 }
 
 .copy-btn::before {
@@ -335,6 +344,16 @@ div {
     display: block;
 }
 
+#previewInExcel{
+    width: 80%;
+    position:absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+}
+
+
 @-webkit-keyframes glow {
     0% {
         background-color: #2bff00;
@@ -349,7 +368,7 @@ div {
     }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 660px) {
     .container {
         width: 90%;
 
@@ -375,6 +394,9 @@ div {
     .btn-grp>a,
     button {
         margin-top: 5px;
+    }
+    .preview-header-section {
+        width: 100%;
     }
 
 }

@@ -17,6 +17,11 @@
         integrity="sha512-SGWgwwRA8xZgEoKiex3UubkSkV1zSE1BS6O4pXcaxcNtUlQsOmOmhVnDwIvqGRfEmuz83tIGL13cXMZn6upPyg=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<!-- excel previewer -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
 </head>
 
 <body class="">
@@ -45,7 +50,6 @@
         <input type="file" class="file-input" accept=".csv" hidden>
         <div class="btn-grp">
             <button class="btn btn-upload" id="upload">Upload Excel </button>
-            <!-- <div id="buttonDiv"></div> -->
             <a href="./assets/new_instructions.pdf" class="btn-warning" target="_blank">
                 <button class=" btn ">
                     <img src="./assets/svg/info-icon.svg" alt="">
@@ -75,6 +79,11 @@
                     <span></span>
                     <img src="./assets/svg/copy-icon.svg" alt="" />
                 </button>
+                <!-- TODO -->
+                <!-- <button class="btn excel-preview">
+                    <span></span>
+                    <img src="./assets/svg/excel-icon.svg" alt="" />
+                </button> -->
 
             </div>
         </div>
@@ -85,6 +94,7 @@
         </div>
     </section>
 
+    <section  id="previewInExcel"></section>
 
     <script src="./script/app.js" type="module" defer></script>
     <!-- <script src="./script/auth.mjs"></script> -->

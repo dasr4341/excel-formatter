@@ -5,6 +5,7 @@ const message = document.querySelector(".message");
 const loader = document.querySelector(".custom-loader");
 const copyBtn = document.querySelector(".copy-btn");
 const fileUploadBanner = document.querySelector(".file-upload-banner").getElementsByTagName('span')[0];
+const previewInExcel = document.querySelector('#previewInExcel');
 
 loader.style.display = 'none';
 message.style.display = 'none';
@@ -50,6 +51,24 @@ function exportWorksheet(jsonObject) {
     XLSX.writeFile(myWorkBook, "myTimeLog.xlsx");
 }
 
+function excelPreviewer(data) {
+    if (!data.length) {
+        showErrorMessage('Please upload a csv file to preview !!');
+        return;
+    }
+
+    const handsontableObj = new Handsontable(previewInExcel, {
+        data,
+        rowHeaders: true,
+        colHeaders: true,
+        width: '100%',
+        height: '100%',
+        rowHeights: 23,
+        colWidths: 100,
+        licenseKey: 'non-commercial-and-evaluation'
+    });
+}
+
 function toggleTheme() {
     document.body.classList.toggle('dark');
 }
@@ -75,28 +94,31 @@ document.getElementById('upload').addEventListener('click', () => {
 document.querySelector('.download-btn').addEventListener('click', downloadExcelFile)
 document.querySelector('.theme-toggler').addEventListener('click', toggleTheme)
 
+
+
+const getTableText = (data, divider) => {
+    const columns = Object.keys(data[0]);
+    const th = `${columns.join(divider)}`;
+    const td = data
+        .map((item) => Object.values(item).join(`"${divider}"`))
+        .join('"\n"');
+
+    return `${th}\n"${td}"`;
+};
+
 copyBtn.addEventListener('click', () => {
     if (!formattedData.length) {
         showErrorMessage('Nothing to Copy, please upload a excel to copy !!');
         return;
     }
-
-    // create a Range object
-    const range = document.createRange();
-    // set the Node to select the "range"
-    range.selectNode(table);
-
-    // add the Range to the set of window selections
-    window.getSelection().addRange(range);
-
-    // execute 'copy', can't 'cut' in this case
-    document.execCommand('copy');
-    copyBtn.classList.add("active");
-    // copyBtn.getElementsByTagName('span')[0].innerText = 'Copied'
-    window.getSelection().removeAllRanges();
-    setTimeout(() => {
-        copyBtn.classList.remove("active");
-    }, 500)
+    const tableDataAsText = getTableText(formattedData, "\t");
+    navigator.clipboard.writeText(tableDataAsText).then(() => {
+        copyBtn.classList.add("active");
+        // copyBtn.getElementsByTagName('span')[0].innerText = 'Copied'
+        setTimeout(() => {
+            copyBtn.classList.remove("active");
+        }, 500)
+    });
 });
 
 (function () {
@@ -108,7 +130,6 @@ copyBtn.addEventListener('click', () => {
 })()
 
 // ----------------------------- event listener ends --------------------
-
 
 
 function csvFileParser(inp_file) {
@@ -176,7 +197,7 @@ async function formatDataAsPerRequirement(data) {
             let updatedHours = Number(prevTaskTime[0]) + Number(currentTaskTime[0]);
             let updatedMinutes = Number(prevTaskTime[1]) + Number(currentTaskTime[1]);
 
-            if (updatedMinutes > 60 ) {
+            if (updatedMinutes > 60) {
                 updatedHours += Math.floor(updatedMinutes / 60);
                 updatedMinutes = updatedMinutes % 60;
             }
@@ -220,7 +241,7 @@ async function proceedWithData(excelData) {
 
         // changed to mm/dd/yyyy
         const date = (neededData?.Date || neededData?.date) ? new Date(neededData?.Date || neededData?.date) : null;
-        const formattedDate = date ? `${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}` : 'Not Found';
+        const formattedDate = date ? `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` : 'Not Found';
 
         // changed to hh:mm format time
         const hrs = neededData['HRS (Digital)'] ? neededData['HRS (Digital)'].split(':') : null;
@@ -240,7 +261,6 @@ async function proceedWithData(excelData) {
     formattedData = await formatDataAsPerRequirement(jsonData);
     showFormattedDataInPage(formattedData);
 }
-
 
 
 // old template format
