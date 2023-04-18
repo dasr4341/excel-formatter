@@ -63,7 +63,6 @@ function excelPreviewer(data) {
         colHeaders: true,
         width: '100%',
         height: '100%',
-        rowHeights: 23,
         colWidths: 100,
         licenseKey: 'non-commercial-and-evaluation'
     });
@@ -118,6 +117,7 @@ copyBtn.addEventListener('click', () => {
         setTimeout(() => {
             copyBtn.classList.remove("active");
         }, 500)
+        excelPreviewer(formattedData);
     });
 });
 

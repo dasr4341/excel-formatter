@@ -1,103 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="google-site-verification" content="LJ5CKn1KrqbYfO0rXyHGxrKljPmB6VUE-kH0_XInPS4" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="google-site-verification"
+      content="LJ5CKn1KrqbYfO0rXyHGxrKljPmB6VUE-kH0_XInPS4"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Get Your Time Log Data</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
-        integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+      integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <!-- get data -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"
-        integrity="sha512-SGWgwwRA8xZgEoKiex3UubkSkV1zSE1BS6O4pXcaxcNtUlQsOmOmhVnDwIvqGRfEmuz83tIGL13cXMZn6upPyg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"
+      integrity="sha512-SGWgwwRA8xZgEoKiex3UubkSkV1zSE1BS6O4pXcaxcNtUlQsOmOmhVnDwIvqGRfEmuz83tIGL13cXMZn6upPyg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-<!-- excel previewer -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+    <!-- excel previewer -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css"
+    />
+  </head>
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
-</head>
-
-<body class="">
-
+  <body class="">
     <section class="nav">
-        <div></div>
-        <div class="nav-header">
-            <div class="header">Get TimeLog Data</div>
-            <div class="theme-toggler">
-                <img src="./assets/svg/sun-icon.svg" alt="sun" class="sun">
-                <img src="./assets/svg/moon-icon.svg" alt="moon" class="moon">
-            </div>
+      <div></div>
+      <div class="nav-header">
+        <div class="header">Get TimeLog Data</div>
+        <div class="theme-toggler">
+          <img src="./assets/svg/sun-icon.svg" alt="sun" class="sun" />
+          <img src="./assets/svg/moon-icon.svg" alt="moon" class="moon" />
         </div>
+      </div>
 
-        <a class="git-hub-logo" href="https://github.com/dasr4341/excel-formatter" target="_blank">
-            <img src="./assets/svg/github-icon.svg" alt="">
+      <a
+        class="git-hub-logo"
+        href="https://github.com/dasr4341/excel-formatter"
+        target="_blank"
+      >
+        <img src="./assets/svg/github-icon.svg" alt="" />
+      </a>
+    </section>
+    <section class="container">
+      <div class="file-upload-banner">
+        <img src="./assets/svg/upload-icon.svg" alt="upload-csv" />
+        <span>* Upload csv file</span>
+        <div class="message"></div>
+      </div>
+
+      <input type="file" class="file-input" accept=".csv" hidden />
+      <div class="btn-grp">
+        <button class="btn btn-upload" id="upload">Upload Excel</button>
+        <a
+          href="./assets/new_instructions.pdf"
+          class="btn-warning"
+          target="_blank"
+        >
+          <button class="btn">
+            <img src="./assets/svg/info-icon.svg" alt="" />
+            <span>Instructions</span>
+          </button>
         </a>
+      </div>
+      <div class="custom-loader justify-content-center">
+        <button class="btn btn-primary" type="button" disabled>
+          <span
+            class="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+          Loading...
+        </button>
+      </div>
     </section>
-    <section class="container">
-        <div class="file-upload-banner">
-            <img src="./assets/svg/upload-icon.svg" alt="upload-csv">
-            <span>* Upload csv file</span>
-            <div class="message"></div>
-        </div>
 
-        <input type="file" class="file-input" accept=".csv" hidden>
+    <section class="container">
+      <div class="preview-header-section">
+        <div class="preview-heading">Preview</div>
+
         <div class="btn-grp">
-            <button class="btn btn-upload" id="upload">Upload Excel </button>
-            <a href="./assets/new_instructions.pdf" class="btn-warning" target="_blank">
-                <button class=" btn ">
-                    <img src="./assets/svg/info-icon.svg" alt="">
-                    <span>Instructions</span></button>
-            </a>
-        </div>
-        <div class="custom-loader  justify-content-center">
-            <button class="btn btn-primary" type="button" disabled>
-                <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                Loading...
-            </button>
-        </div>
-    </section>
+          <button class="btn download-btn">
+            <img src="./assets/svg/download-icon.svg" alt="" />
+            <span>Download</span>
+          </button>
 
-
-    <section class="container">
-        <div class="preview-header-section">
-            <div class="preview-heading">Preview </div>
-
-            <div class="btn-grp">
-                <button class=" btn  download-btn">
-                    <img src="./assets/svg/download-icon.svg" alt="">
-                    <span>Download</span>
-                </button>
-
-                <button class="btn copy-btn">
-                    <span></span>
-                    <img src="./assets/svg/copy-icon.svg" alt="" />
-                </button>
-                <!-- TODO -->
-                <!-- <button class="btn excel-preview">
+          <button class="btn copy-btn">
+            <span></span>
+            <img src="./assets/svg/copy-icon.svg" alt="" />
+          </button>
+          <!-- TODO -->
+          <!-- <button class="btn excel-preview">
                     <span></span>
                     <img src="./assets/svg/excel-icon.svg" alt="" />
                 </button> -->
-
-            </div>
         </div>
-        <div class="table-container">
-            <div class="table table-to-copy">
-
-            </div>
-        </div>
+      </div>
+      <div class="table-container">
+        <div class="table table-to-copy"></div>
+      </div>
     </section>
 
-    <section  id="previewInExcel"></section>
+    <section id="previewInExcel"></section>
 
     <script src="./script/app.js" type="module" defer></script>
     <!-- <script src="./script/auth.mjs"></script> -->
-</body>
-
+  </body>
 </html>
