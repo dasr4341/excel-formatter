@@ -17,6 +17,7 @@ body {
     --theme-text: #4d1a1a;
     --theme-warning: rgb(205, 205, 0);
     --theme-warning-dark: rgb(182, 182, 14);
+    --theme-red: rgb(224, 8, 8);
     transition: all 1s;
     background-color: var(--theme-bg);
 }
@@ -130,6 +131,7 @@ a,
     text-transform: uppercase;
 }
 
+
 .download-btn>img {
     width: 20px;
     height: 20px;
@@ -168,8 +170,14 @@ a,
     width: 20px;
     height: 18px;
 }
-
+.excel-preview > span{
+    color: white;
+    padding-right: 2px;
+}
 .excel-preview{
+    display: flex;
+    flex-direction: row;
+    align-content: center;
     background-color: green;
 }
 .excel-preview > img{
@@ -343,15 +351,52 @@ a,
 .dark .moon {
     display: block;
 }
-
-#previewInExcel{
-    width: 80%;
-    position:absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.excel-preview-section{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    display: none;
     background-color: white;
 }
+.excel-preview-section.active{
+    display: block;
+}
+
+.excel-preview-header{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 10px;
+}
+.preview-title{
+    font-size: 30px;
+    font-weight: 500;
+}
+
+ .save-btn,  .close-btn {
+    background-color: var(--theme-green);
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+ .close-btn {
+    background-color: var(--theme-red);
+}
+
+
+.save-btn>img, .close-btn>img  {
+    width: 15px;
+    height: 15px;
+}
+
+#previewInExcel{
+    width: 100%;
+    height: 100%;
+}
+
 
 
 @-webkit-keyframes glow {

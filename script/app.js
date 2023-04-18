@@ -5,14 +5,15 @@ const message = document.querySelector(".message");
 const loader = document.querySelector(".custom-loader");
 const copyBtn = document.querySelector(".copy-btn");
 const fileUploadBanner = document.querySelector(".file-upload-banner").getElementsByTagName('span')[0];
-const previewInExcel = document.querySelector('#previewInExcel');
+const previewArea = document.querySelector('#previewInExcel');
+const excelPreviewSection = document.querySelector('.excel-preview-section');
 
 loader.style.display = 'none';
 message.style.display = 'none';
 tableHeader.style.display = 'none';
 
 let formattedData = [];
-
+let handsontableObj;
 
 // ------------------------ helper starts -------------------------
 function showErrorMessage(errTxt) {
@@ -51,25 +52,30 @@ function exportWorksheet(jsonObject) {
     XLSX.writeFile(myWorkBook, "myTimeLog.xlsx");
 }
 
-function excelPreviewer(data) {
+function previewInExcelViewer(data) {
     if (!data.length) {
         showErrorMessage('Please upload a csv file to preview !!');
         return;
     }
 
-    const handsontableObj = new Handsontable(previewInExcel, {
+     handsontableObj = new Handsontable(previewArea, {
         data,
         rowHeaders: true,
         colHeaders: true,
         width: '100%',
-        height: '100%',
-        colWidths: 100,
+        height: '90%',
+        contextMenu: true,
+        manualRowMove: true,
         licenseKey: 'non-commercial-and-evaluation'
     });
 }
 
 function toggleTheme() {
     document.body.classList.toggle('dark');
+}
+
+function excelPreviewSectionToggleVisibility() {
+    excelPreviewSection.classList.toggle('active');
 }
 //  ---------------------------- helper ends--------------------------------
 
@@ -92,6 +98,18 @@ document.getElementById('upload').addEventListener('click', () => {
 
 document.querySelector('.download-btn').addEventListener('click', downloadExcelFile)
 document.querySelector('.theme-toggler').addEventListener('click', toggleTheme)
+document.querySelector('.excel-preview').addEventListener('click', () => {
+    excelPreviewSectionToggleVisibility();
+    previewInExcelViewer(formattedData);
+})
+document.querySelector('.excel-preview-close').addEventListener('click', excelPreviewSectionToggleVisibility)
+document.querySelector('.excel-preview-save').addEventListener('click', () => {
+    const d = handsontableObj.getData();
+    console.log(d);
+    // todo
+})
+
+
 
 
 
@@ -117,7 +135,6 @@ copyBtn.addEventListener('click', () => {
         setTimeout(() => {
             copyBtn.classList.remove("active");
         }, 500)
-        excelPreviewer(formattedData);
     });
 });
 
@@ -150,6 +167,7 @@ function csvFileParser(inp_file) {
             header: true,
             skipEmptyLines: true,
             complete: function (results) {
+                console.log('results.data', results.data);
                 proceedWithData(results.data);
             }
         }
@@ -236,7 +254,7 @@ async function proceedWithData(excelData) {
         showErrorMessage('Empty file !!');
         return;
     }
-    const jsonData = (Object.values(excelData).filter(d => d.Project.toLowerCase().includes('jira')).map((d, index) => {
+    const jsonData = (Object.values(excelData).filter(d => d.Task.toLowerCase().includes('prth')).map((d, index) => {
         const { Project, User, Task, ...neededData } = d;
 
         // changed to mm/dd/yyyy
@@ -260,6 +278,7 @@ async function proceedWithData(excelData) {
 
     formattedData = await formatDataAsPerRequirement(jsonData);
     showFormattedDataInPage(formattedData);
+    // previewInExcelViewer(formattedData)
 }
 
 
@@ -302,3 +321,15 @@ async function proceedWithDataOldFormat(excelData) {
     });
     showFormattedDataInPage(jsonData);
 }
+
+ Papa.parse(
+        './excel.csv',
+        {
+            download: true,
+            header: true,
+            skipEmptyLines: true,
+            complete: function (results) {
+                proceedWithData(results.data);
+            }
+        }
+    );
