@@ -105,6 +105,17 @@ a,
     cursor: pointer;
     font-size: 15px;
     letter-spacing: 0.1rem;
+
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+}
+
+.btn>img {
+    width: 20px;
+    height: 20px;
 }
 
 .btn-upload {
@@ -120,29 +131,19 @@ a,
 
 .download-btn {
     background-color: var(--theme-green);
-    color: white;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
 }
 
 .download-btn>span {
     font-size: 12px;
     text-transform: uppercase;
 }
-
+ 
 
 .download-btn>img {
-    width: 20px;
-    height: 20px;
     margin-right: 10px;
 }
 .btn-warning>button {
     font-weight: 500;
-    color: white;
-    display: flex;
-    flex-direction: row;
-    align-content: center;
     background-color: var(--theme-warning);
 }
 
@@ -155,8 +156,6 @@ a,
 }
 
 .btn-warning img {
-    width: 20px;
-    height: 20px;
     margin-right: 10px;
 }
 
@@ -175,13 +174,10 @@ a,
     padding-right: 2px;
 }
 .excel-preview{
-    display: flex;
-    flex-direction: row;
-    align-content: center;
     background-color: green;
 }
 .excel-preview > img{
-      width: 28px;
+    width: 28px;
     height: 18px;
 }
 
@@ -375,22 +371,96 @@ a,
     font-weight: 500;
 }
 
- .save-btn,  .close-btn {
+ .save-btn {
     background-color: var(--theme-green);
-    color: white;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
 }
- .close-btn {
+
+.close-btn {
     background-color: var(--theme-red);
 }
+.reset-btn {
+    display: none;
+    --reset-btn-content : 'Reset';
+    background-color: var(--theme-warning);
+    margin-left: 10px;
+}
+
+.reset-btn::after{
+    content: '';
+    width: 14px;
+    height: 14px;
+    background-color:rgb(126, 250, 163);
+    position: absolute;
+    right: -30px;
+   transform: rotate(45deg);
+   display: none;
+}
+.reset-btn::before{
+    color: brown;
+    content: var(--reset-btn-content);
+    width: 70px;
+    height: 20px;
+    background-color:rgb(126, 250, 163);
+    position: absolute;
+    right: -109px;
+    text-align: center;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 15px;
+    z-index: 10;
+}
 
 
-.save-btn>img, .close-btn>img  {
+.save-btn>img, .close-btn>img , .reset-btn>img {
     width: 15px;
     height: 15px;
 }
+
+.save-btn::after{
+    content: '';
+    width: 14px;
+    height: 14px;
+    background-color: var(--theme-green);
+    position: absolute;
+    left: -30px;
+   transform: rotate(45deg);
+   display: none;
+}
+.save-btn::before{
+    content: 'Saved';
+    width: 70px;
+    height: 20px;
+    background-color: var(--theme-green);
+    position: absolute;
+    left: -109px;
+    text-align: center;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 15px;
+    z-index: 10;
+}
+
+.save-btn.active::after, .save-btn.active::before,
+.reset-btn.active::after, 
+.reset-btn.active::before
+{
+    display: flex;
+}
+
+.preview-btn-grp{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
 
 #previewInExcel{
     width: 100%;
