@@ -50,7 +50,7 @@ function showAndHideLoader(status) {
 }
 
 function showFormattedDataInPage(jsonData) {
-  table.innerHTML = '';
+  table.innerHTML = "";
   tableHeader.style.display = "flex";
   const myWorkSheet = XLSX.utils.json_to_sheet(jsonData);
 
@@ -122,7 +122,6 @@ previewResetBtn.addEventListener("mouseover", () => {
   addOrRemoveActiveClass(previewResetBtn);
 });
 
-
 document
   .querySelector(".download-btn")
   .addEventListener("click", downloadExcelFile);
@@ -146,10 +145,9 @@ document
   .querySelector(".excel-preview-close")
   .addEventListener("click", excelPreviewSectionToggleVisibility);
 
-
 previewSaveBtn.addEventListener("click", () => {
   // Saving the prev version json data -> for undo operation
-  prevFormattedData = structuredClone(formattedData) ;
+  prevFormattedData = structuredClone(formattedData);
 
   const editedData = Object.values(handsontableObj.getData());
   const header = Object.keys(formattedData[0]);
@@ -227,73 +225,54 @@ async function formatDataAsPerRequirement(data) {
   // 8. Please don’t have rows with items less then 1 hr (club the points in the same row if necessary)
   // ------------------------------------------------------- REQUIREMENT -------------------------------------
   let output = [];
-  let prevDate = "";
-  let prevIndex = 0;
+  let prevData;
+  const blankRow = {
+    date: "",
+    ticket_id: "",
+    ticket_title: "",
+    status: "",
+    hrs: "",
+  };
   data.forEach((d, index) => {
-    if (prevIndex >= output.length) {
-      prevIndex = output.length - 1;
+    let obj = {};
+    const [currentHr, currentMin] = d.hrs.split(":");
+
+    if (index !== 0 && prevData?.date !== d.date) {
+      output.push(blankRow);
     }
 
-    const currentTaskTime = d["HRS (Digital)"]
-      ? d["HRS (Digital)"].split(":")
-      : null;
+    if (prevData?.date === d.date) {
+      if (currentHr < 1) {
+        prevData.ticket_title += `, ${d.ticket_title}`;
+        prevData.ticket_id += `, ${d.ticket_id}`;
 
-    if (prevDate !== "" && d?.Date !== prevDate) {
-      output.push({
-        "HRS (Digital)": "",
-        Date: "",
-        "Serial No": "",
-        Status: "",
-        "Ticket #": "",
-        "Ticket Title": "",
-      });
-    }
+        const [prevHr, prevMin] = prevData.hrs.split(":");
 
-    if (
-      prevDate !== "" &&
-      prevDate === d.Date &&
-      !!currentTaskTime &&
-      currentTaskTime[0] < 1
-    ) {
-      const prevTaskData = output[prevIndex];
-      const prevTaskTime = prevTaskData["HRS (Digital)"]
-        ? prevTaskData["HRS (Digital)"].split(":")
-        : [0, 0];
+        let updatedHours = Number(prevHr) + Number(currentHr);
+        let updatedMinutes = Number(prevMin) + Number(currentMin);
 
-      let updatedHours = Number(prevTaskTime[0]) + Number(currentTaskTime[0]);
-      let updatedMinutes = Number(prevTaskTime[1]) + Number(currentTaskTime[1]);
+        if (updatedMinutes > 60) {
+          updatedHours += Math.floor(updatedMinutes / 60);
+          updatedMinutes = updatedMinutes % 60;
+        }
 
-      if (updatedMinutes > 60) {
-        updatedHours += Math.floor(updatedMinutes / 60);
-        updatedMinutes = updatedMinutes % 60;
+        prevData.hrs = `${
+          updatedHours < 10 ? "0" + updatedHours : updatedHours
+        }:${updatedMinutes < 10 ? "0" + updatedMinutes : updatedMinutes}`;
+      } else {
+        obj = {
+          ...d,
+          date: "",
+        };
       }
-
-      prevTaskData[
-        "Ticket #"
-      ] = `${prevTaskData["Ticket #"]}, ${d["Ticket #"]}`;
-      prevTaskData[
-        "Ticket Title"
-      ] = `${prevTaskData["Ticket Title"]}, ${d["Ticket Title"]}`;
-      prevTaskData["HRS (Digital)"] = `${
-        updatedHours < 10 ? "0" + updatedHours : updatedHours
-      }:${updatedMinutes < 10 ? "0" + updatedMinutes : updatedMinutes}`;
-
-      output[prevIndex] = prevTaskData;
-    } else if (prevDate !== "" && d?.Date === prevDate) {
-      output.push({
-        "Serial No": d["Serial No"],
-        Date: "",
-        "Ticket #": d["Ticket #"],
-        "Ticket Title": d["Ticket Title"],
-        Status: d["Status"],
-        "HRS (Digital)": d["HRS (Digital)"],
-      });
-      prevIndex = index;
     } else {
-      output.push(d);
-      prevIndex = index;
+      obj = d;
+      prevData = d;
     }
-    prevDate = d.Date;
+
+    if (!!obj?.ticket_title) {
+      output.push(obj);
+    }
   });
   return output;
 }
@@ -326,14 +305,11 @@ async function proceedWithData(excelData) {
         : null;
 
       return {
-        "Serial No": index + 1,
-        Date: formattedDate,
-        "Ticket #": Task?.substring(Task?.indexOf("PRTH")),
-        "Ticket Title": Task || "No Data Found",
-        Status: "",
-        // ...neededData
-        "HRS (Digital)": hrs ? `${hrs[0]}:${hrs[1]}` : "Not Found",
-        '': ''
+        date: formattedDate,
+        ticket_id: Task?.substring(Task?.indexOf("PRTH")),
+        ticket_title: Task || "No Data Found",
+        status: "",
+        hrs: hrs ? `${hrs[0]}:${hrs[1]}` : "Not Found",
       };
     });
   formattedData = [];
@@ -341,55 +317,3 @@ async function proceedWithData(excelData) {
   formattedData = await formatDataAsPerRequirement(jsonData);
   showFormattedDataInPage(formattedData);
 }
-
-// old template format
-async function proceedWithDataOldFormat(excelData) {
-  if (!excelData.length) {
-    showAndHideLoader(false);
-    table.innerHTML = "";
-    formattedData = [];
-    showErrorMessage("Empty file !!");
-    return;
-  }
-  formattedData = [];
-  const jsonData = await Object.values(excelData)
-    .filter((d) => d.Project.toLowerCase().includes("jira"))
-    .map((d, index) => {
-      const { Project, User, Task, ...neededData } = d;
-      return {
-        "Serial No": index + 1,
-        Date: neededData?.Date || neededData?.date || "Not Found",
-        "Ticket #": Task?.substring(Task?.indexOf("PRTH")),
-        "Ticket Title": Task || "No Data Found",
-        Status: "",
-        ...neededData,
-      };
-    });
-
-  let prevDate = "";
-  jsonData.forEach((d) => {
-    if (prevDate !== "" && d?.Date !== prevDate) {
-      formattedData.push({
-        "HRS (Digital)": "",
-        Date: "",
-        "Serial No": "",
-        Status: "",
-        "Ticket #": "",
-        "Ticket Title": "",
-      });
-    }
-    formattedData.push(d);
-    prevDate = d.Date;
-  });
-  showFormattedDataInPage(jsonData);
-}
-
-// Papa.parse("./excel.csv", {
-//   download: true,
-//   header: true,
-//   skipEmptyLines: true,
-//   complete: function (results) {
-//     console.log("results.data", results.data);
-//     proceedWithData(results.data);
-//   },
-// });
