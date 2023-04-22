@@ -106,7 +106,8 @@ fileInput.addEventListener("change", (e) => {
   }
 });
 
-document.getElementById("upload").addEventListener("click", () => {
+document.getElementById("upload").addEventListener("click", (e) => {
+  e.stopPropagation();
   csvFileParser(fileInput);
 });
 
@@ -180,13 +181,13 @@ copyBtn.addEventListener("click", () => {
   });
 });
 
-(function () {
-  const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-  if (darkThemeMq.matches) {
-    // Theme set to dark.
-    toggleTheme();
-  }
-})();
+// (function () {
+//   const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+//   if (darkThemeMq.matches) {
+//     // Theme set to dark.
+//     toggleTheme();
+//   }
+// })();
 
 // ----------------------------- event listener ends --------------------
 

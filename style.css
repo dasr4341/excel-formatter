@@ -8,13 +8,15 @@
 }
 
 body {
-    --theme-bg: white;
+    --theme-bg: rgb(246, 246, 246);
     --theme-light-orange: rgba(249, 236, 52, 0.358);
     --theme-medium-orange: rgb(144, 96, 0);
     --theme-green: rgb(8, 124, 8);
     --theme-blue: #0039ca;
     --theme-black: black;
     --theme-text: #4d1a1a;
+     --theme-text-medium: rgb(56, 39, 39);
+     --theme-text-light: rgb(94, 68, 68);
     --theme-warning: rgb(205, 205, 0);
     --theme-warning-dark: rgb(182, 182, 14);
     --theme-red: rgb(224, 8, 8);
@@ -31,20 +33,45 @@ body.dark {
     --theme-black: rgb(75, 47, 47);
     --theme-text: white;
 
+         --theme-text-medium: rgb(205, 177, 177);
+     --theme-text-light: rgb(103, 80, 80);
+
 
 }
 
+.nav {
+    margin: auto;
+    width: 80%;
+    padding: 10px 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+.nav-info-icon{
+    display: flex;
+    align-items: center;
+    
+}
 .header {
     margin-top: 10px;
-    text-align: center;
-    font-size: 50px;
-    font-weight: 700;
+    font-size: 35px;
+    font-weight: 900;
     color: var(--theme-text);
 }
+.header> img {
+    width:40px;
+    height:40px;
+    -webkit-mask-size: cover;
+    mask-size:cover;
+    -webkit-mask-image: url('./assets/svg/header-logo.svg');
+    mask-image: url('./assets/svg/header-logo.svg');
+    background-color: rgb(11, 64, 255);
+}
+
 
 .container {
     position: relative;
-    /* overflow: scroll; */
     width: 60%;
     margin: auto;
     display: flex;
@@ -55,13 +82,12 @@ body.dark {
 }
 
 .file-upload-banner {
-    text-align: center;
-    max-width: 600px;
-    margin: auto;
     width: 80%;
+    height: 60%;
+    text-align: center;
     background-color: var(--theme-light-orange);
     border: 2px dashed var(--theme-medium-orange);
-    padding: 40px 0;
+  
     border-radius: 10px;
     display: flex;
     flex-direction: column;
@@ -285,26 +311,11 @@ a,
 .theme-toggler>img {
     width: 30px;
     height: 30px;
+    margin-right: 20px;
     cursor: pointer;
 }
 
-.nav {
-    margin: auto;
-    width: 90%;
-    padding: 10px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-}
 
-.nav-header {
-    width: 100%;
-    padding: 10px;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-}
 
 .git-hub-logo>img {
     cursor: pointer;
@@ -326,9 +337,6 @@ a,
 
 }
 
-.theme-toggler {
-    align-self: flex-start;
-}
 
 
 
