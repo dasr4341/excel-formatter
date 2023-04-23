@@ -37,9 +37,6 @@ function showErrorMessage(errTxt) {
   message.style.display = "block";
 }
 
-
-
-
 function downloadExcelFile() {
   if (formattedData.length) {
     exportWorksheet(formattedData);
@@ -101,9 +98,9 @@ function addOrRemoveActiveClass(btnRef) {
 document.querySelector(".file-upload-banner").addEventListener("click", () => {
   fileInput.click();
 });
-message.addEventListener('click', (e) => {
+message.addEventListener("click", (e) => {
   e.stopPropagation();
-})
+});
 
 fileInput.addEventListener("change", (e) => {
   if (!!e.target.files.length) {
@@ -297,7 +294,9 @@ async function proceedWithData(excelData) {
     );
 
     if (!jsonData.length) {
-      throw new Error("Not a valid file, follow<a href='./assets/new_instructions.pdf' target='_blank'>instructions</a> to get a valid file");
+      throw new Error(
+        "Not a valid file, follow<a href='./assets/new_instructions.pdf' target='_blank'>instructions</a> to get a valid file"
+      );
     }
 
     const updatedJsonData = jsonData.map((d, index) => {
