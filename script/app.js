@@ -33,9 +33,12 @@ const handsontableObj = new Handsontable(previewArea, {
 
 // ------------------------ helper starts -------------------------
 function showErrorMessage(errTxt) {
-  message.innerText = errTxt;
+  message.innerHTML = errTxt;
   message.style.display = "block";
 }
+
+
+
 
 function downloadExcelFile() {
   if (formattedData.length) {
@@ -98,11 +101,18 @@ function addOrRemoveActiveClass(btnRef) {
 document.querySelector(".file-upload-banner").addEventListener("click", () => {
   fileInput.click();
 });
+message.addEventListener('click', (e) => {
+  e.stopPropagation();
+})
 
 fileInput.addEventListener("change", (e) => {
   if (!!e.target.files.length) {
     fileUploadBanner.innerHTML = e.target.files[0].name;
     message.style.display = "none";
+    csvFileParser(fileInput);
+  } else {
+    fileUploadBanner.innerHTML = "* Upload csv file";
+    showErrorMessage("No File Selected !!");
   }
 });
 
@@ -181,13 +191,13 @@ copyBtn.addEventListener("click", () => {
   });
 });
 
-// (function () {
-//   const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
-//   if (darkThemeMq.matches) {
-//     // Theme set to dark.
-//     toggleTheme();
-//   }
-// })();
+(function () {
+  const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+  if (darkThemeMq.matches) {
+    // Theme set to dark.
+    toggleTheme();
+  }
+})();
 
 // ----------------------------- event listener ends --------------------
 
@@ -207,7 +217,6 @@ function csvFileParser(inp_file) {
     header: true,
     skipEmptyLines: true,
     complete: function (results) {
-      console.log("results.data", results.data);
       proceedWithData(results.data);
     },
   });
@@ -236,7 +245,7 @@ async function formatDataAsPerRequirement(data) {
   };
   data.forEach((d, index) => {
     let obj = {};
-    const [currentHr, currentMin] = d.hrs.split(":");
+    const [currentHr, currentMin] = d?.hrs?.split(":");
 
     if (index !== 0 && prevData?.date !== d.date) {
       output.push(blankRow);
@@ -279,16 +288,19 @@ async function formatDataAsPerRequirement(data) {
 }
 
 async function proceedWithData(excelData) {
-  if (!excelData.length) {
-    showAndHideLoader(false);
-    table.innerHTML = "";
-    formattedData = [];
-    showErrorMessage("Empty file !!");
-    return;
-  }
-  const jsonData = Object.values(excelData)
-    .filter((d) => d.Task.toLowerCase().includes("prth"))
-    .map((d, index) => {
+  try {
+    if (!excelData.length) {
+      throw new Error("Empty file !!");
+    }
+    const jsonData = Object.values(excelData).filter((d) =>
+      d?.Task?.toLowerCase()?.includes("prth")
+    );
+
+    if (!jsonData.length) {
+      throw new Error("Not a valid file, follow<a href='./assets/new_instructions.pdf' target='_blank'>instructions</a> to get a valid file");
+    }
+
+    const updatedJsonData = jsonData.map((d, index) => {
       const { Project, User, Task, ...neededData } = d;
 
       // changed to mm/dd/yyyy
@@ -301,8 +313,8 @@ async function proceedWithData(excelData) {
         : "Not Found";
 
       // changed to hh:mm format time
-      const hrs = neededData["HRS (Digital)"]
-        ? neededData["HRS (Digital)"].split(":")
+      const hrs = !!neededData["HRS (Digital)"]
+        ? neededData["HRS (Digital)"]?.split(":")
         : null;
 
       return {
@@ -313,8 +325,13 @@ async function proceedWithData(excelData) {
         hrs: hrs ? `${hrs[0]}:${hrs[1]}` : "Not Found",
       };
     });
-  formattedData = [];
-
-  formattedData = await formatDataAsPerRequirement(jsonData);
-  showFormattedDataInPage(formattedData);
+    formattedData = [];
+    formattedData = await formatDataAsPerRequirement(updatedJsonData);
+    showFormattedDataInPage(formattedData);
+  } catch (e) {
+    showAndHideLoader(false);
+    table.innerHTML = "";
+    formattedData = [];
+    showErrorMessage(e.message);
+  }
 }
