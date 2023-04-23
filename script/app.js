@@ -328,6 +328,7 @@ async function proceedWithData(excelData) {
     formattedData = [];
     formattedData = await formatDataAsPerRequirement(updatedJsonData);
     showFormattedDataInPage(formattedData);
+    tableHeader.scrollIntoView(true);
   } catch (e) {
     showAndHideLoader(false);
     table.innerHTML = "";
