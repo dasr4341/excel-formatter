@@ -263,9 +263,8 @@ async function formatDataAsPerRequirement(data) {
           updatedMinutes = updatedMinutes % 60;
         }
 
-        prevData.hrs = `${
-          updatedHours < 10 ? "0" + updatedHours : updatedHours
-        }:${updatedMinutes < 10 ? "0" + updatedMinutes : updatedMinutes}`;
+        prevData.hrs = `${updatedHours < 10 ? "0" + updatedHours : updatedHours
+          }:${updatedMinutes < 10 ? "0" + updatedMinutes : updatedMinutes}`;
       } else {
         obj = {
           ...d,

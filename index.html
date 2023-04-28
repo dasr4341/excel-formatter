@@ -1,217 +1,195 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta
-      name="google-site-verification"
-      content="LJ5CKn1KrqbYfO0rXyHGxrKljPmB6VUE-kH0_XInPS4"
-    />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Get Your Time Log Data</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
-      integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <!-- get data -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"
-      integrity="sha512-SGWgwwRA8xZgEoKiex3UubkSkV1zSE1BS6O4pXcaxcNtUlQsOmOmhVnDwIvqGRfEmuz83tIGL13cXMZn6upPyg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-    <!-- excel previewer -->
-    <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"
-    ></script>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="google-site-verification" content="LJ5CKn1KrqbYfO0rXyHGxrKljPmB6VUE-kH0_XInPS4" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Your Time Log Data</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"
+    integrity="sha512-r22gChDnGvBylk90+2e/ycr3RVrDi8DIOkIGNhJlKfuyQM4tIRAI062MaV8sfjQKYVGjOBaZBOA87z+IhZE9DA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- get data -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"
+    integrity="sha512-SGWgwwRA8xZgEoKiex3UubkSkV1zSE1BS6O4pXcaxcNtUlQsOmOmhVnDwIvqGRfEmuz83tIGL13cXMZn6upPyg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <body>
-    <nav>
-      <div class="nav-bar container">
-        <div class="header">
-          <img src="./assets/svg/header-logo.svg" alt="" />
-          <span>LoFo</span>
-        </div>
-        <div class="nav-info-icon">
-          <div class="theme-toggler">
-            <img src="./assets/svg/sun-icon.svg" alt="sun" class="sun" />
-            <img src="./assets/svg/moon-icon.svg" alt="moon" class="moon" />
-          </div>
-          <a
-            class="git-hub-logo"
-            href="https://github.com/dasr4341/excel-formatter"
-            target="_blank"
-          >
-            <img src="./assets/svg/github-icon.svg" alt="" />
-          </a>
-        </div>
+  <!-- excel previewer -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/handsontable/dist/handsontable.full.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <nav>
+    <div class="nav-bar container">
+      <div class="header">
+        <img src="./assets/svg/header-logo.svg" alt="" />
+        <span>LoFo</span>
       </div>
-    </nav>
+      <div class="nav-info-icon">
+        <div class="theme-toggler">
+          <img src="./assets/svg/sun-icon.svg" alt="sun" class="sun" />
+          <img src="./assets/svg/moon-icon.svg" alt="moon" class="moon" />
+        </div>
+        <a class="git-hub-logo" href="https://github.com/dasr4341/excel-formatter" target="_blank">
+          <img src="./assets/svg/github-icon.svg" alt="" />
+        </a>
+      </div>
+    </div>
+  </nav>
 
-    <section class="container hero">
-      <h1>Log sheet format</h1>
-      <div class="hero-content">
-        <div class="hero-banner">
-          <p>
-            An all-in-one online Daily log editor to edit csv file to the
-            required format. The simplest way to edit your time work log and do
-            more in less time, so you can get down to job quickly.
-          </p>
-          <ul>
-            <li>
-              <img src="./assets/svg/tick-icon.svg" alt="" /> Date has to be on
-              mm/dd/yyyy format
-            </li>
-            <li>
-              <img src="./assets/svg/tick-icon.svg" alt="" /> The Hours has to
-              be in hh:mm format
-            </li>
-            <li>
-              <img src="./assets/svg/tick-icon.svg" alt="" /> 1 empty row after
-              each date
-            </li>
-            <li>
-              <img src="./assets/svg/tick-icon.svg" alt="" /> No duplicate dates
-            </li>
-            <li>
-              <img src="./assets/svg/tick-icon.svg" alt="" /> No repetition in
-              date, if the above feature is the same date (no blank rows between
-              items of the same date)
-            </li>
-            <!-- <li>
+  <section class="container hero">
+    <h1>Log sheet format</h1>
+    <div class="hero-content">
+      <div class="hero-banner">
+        <p>
+          An all-in-one online Daily log editor to edit csv file to the
+          required format. The simplest way to edit your time work log and do
+          more in less time, so you can get down to job quickly.
+        </p>
+        <ul>
+          <li>
+            <img src="./assets/svg/tick-icon.svg" alt="" /> Date has to be on
+            mm/dd/yyyy format
+          </li>
+          <li>
+            <img src="./assets/svg/tick-icon.svg" alt="" /> The Hours has to
+            be in hh:mm format
+          </li>
+          <li>
+            <img src="./assets/svg/tick-icon.svg" alt="" /> 1 empty row after
+            each date
+          </li>
+          <li>
+            <img src="./assets/svg/tick-icon.svg" alt="" /> No duplicate dates
+          </li>
+          <li>
+            <img src="./assets/svg/tick-icon.svg" alt="" /> No repetition in
+            date, if the above feature is the same date (no blank rows between
+            items of the same date)
+          </li>
+          <!-- <li>
                 <img src="./assets/svg/tick-icon.svg" alt="" /> Each day has to be
                 either 7+ hours or 3+ hours.
               </li> -->
-            <!-- <li>
+          <!-- <li>
                 <img src="./assets/svg/tick-icon.svg" alt="" /> Hours can’t exceed
                 9 for any day
               </li> -->
-            <li>
-              <img src="./assets/svg/tick-icon.svg" alt="" /> Please don’t have
-              rows with items less then 1 hr (club the points in the same row if
-              necessary)
-            </li>
-          </ul>
-          <a
-            href="./assets/new_instructions.pdf"
-            class="btn-warning"
-            target="_blank"
-          >
-            <button class="btn">
-              <img src="./assets/svg/info-icon.svg" alt="" />
-              <span>Instructions</span>
-            </button>
-          </a>
-        </div>
-        <div class="hero-file-upload">
-          <div class="file-upload-banner">
-            <div class="file-upload-banner-content">
-              <img src="./assets/svg/upload-icon.svg" alt="upload-csv" />
-              <span>* Upload csv file</span>
-              <br />
-              <button class="btn btn-upload" id="upload">Upload</button>
-              <div class="custom-loader" disabled>Loading...</div>
-              <div class="message"></div>
-            </div>
-          </div>
-          <input type="file" class="file-input" accept=".csv" hidden />
-        </div>
+          <li>
+            <img src="./assets/svg/tick-icon.svg" alt="" /> Please don’t have
+            rows with items less then 1 hr (club the points in the same row if
+            necessary)
+          </li>
+        </ul>
+        <a href="./assets/new_instructions.pdf" class="btn-warning" target="_blank">
+          <button class="btn">
+            <img src="./assets/svg/info-icon.svg" alt="" />
+            <span>Instructions</span>
+          </button>
+        </a>
       </div>
-    </section>
-
-    <section class="container how-to-use">
-      <div class="how-to-use-h">How to use</div>
-
-      <div class="how-to-use-content">
-        <div class="card">
-          <img src="./assets/png/csv.png" alt="" />
-          <div class="card-content">
-            <div class="card-h">Download</div>
-            <p>Download required csv from TimeDoctor</p>
+      <div class="hero-file-upload">
+        <div class="file-upload-banner">
+          <div class="file-upload-banner-content">
+            <img src="./assets/svg/upload-icon.svg" alt="upload-csv" />
+            <span>* Upload csv file</span>
+            <br />
+            <button class="btn btn-upload" id="upload">Upload</button>
+            <div class="custom-loader" disabled>Loading...</div>
+            <div class="message"></div>
           </div>
         </div>
+        <input type="file" class="file-input" accept=".csv" hidden />
+      </div>
+    </div>
+  </section>
 
-        <div class="card">
-          <img src="./assets/png/upload.png" alt="" />
-          <div class="card-content">
-            <div class="card-h">Upload Csv File</div>
-            <p>Upload the downloaded csv file from TimeDoctor</p>
-          </div>
-        </div>
+  <section class="container how-to-use">
+    <div class="how-to-use-h">How to use</div>
 
-        <div class="card">
-          <img src="./assets/png/get.png" alt="" />
-          <div class="card-content">
-            <div class="card-h">Get Data</div>
-            <p>Now you can copy, or download the formatted data</p>
-          </div>
+    <div class="how-to-use-content">
+      <div class="card">
+        <img src="./assets/png/csv.png" alt="" />
+        <div class="card-content">
+          <div class="card-h">Download</div>
+          <p>Download required csv from TimeDoctor</p>
         </div>
       </div>
-    </section>
 
-    <section class="container">
-      <div class="preview-header-section">
-        <div class="preview-heading">Preview</div>
-
-        <div class="btn-grp">
-          <button class="btn download-btn">
-            <img src="./assets/svg/download-icon.svg" alt="" />
-          </button>
-
-          <button class="btn excel-preview">
-            <img src="./assets/svg/edit-icon.svg" alt="" />
-          </button>
-          <button class="btn copy-btn">
-            <img src="./assets/svg/copy-icon.svg" alt="" />
-          </button>
+      <div class="card">
+        <img src="./assets/png/upload.png" alt="" />
+        <div class="card-content">
+          <div class="card-h">Upload Csv File</div>
+          <p>Upload the downloaded csv file from TimeDoctor</p>
         </div>
       </div>
-      <div class="table-container">
-        <div class="table table-to-copy"></div>
-      </div>
-    </section>
 
-    <section class="excel-preview-section">
-      <div class="excel-preview-header">
-        <div class="preview-btn-grp">
-          <button class="btn back-btn excel-preview-close">
-            <img src="./assets/svg/back-icon.svg" alt="" />
-          </button>
-          <button class="btn reset-btn excel-preview-reset">
-            <img src="./assets/svg/refresh-icon.svg" alt="" />
-          </button>
+      <div class="card">
+        <img src="./assets/png/get.png" alt="" />
+        <div class="card-content">
+          <div class="card-h">Get Data</div>
+          <p>Now you can copy, or download the formatted data</p>
         </div>
+      </div>
+    </div>
+  </section>
 
-        <div class="preview-title">Sheet edit</div>
-        <button class="btn save-btn excel-preview-save">
-          <img src="./assets/svg/save-icon.svg" alt="" />
+  <section class="container">
+    <div class="preview-header-section">
+      <div class="preview-heading">Preview</div>
+
+      <div class="btn-grp">
+        <button class="btn download-btn">
+          <img src="./assets/svg/download-icon.svg" alt="" />
+        </button>
+
+        <button class="btn excel-preview">
+          <img src="./assets/svg/edit-icon.svg" alt="" />
+        </button>
+        <button class="btn copy-btn">
+          <img src="./assets/svg/copy-icon.svg" alt="" />
         </button>
       </div>
-      <div id="previewInExcel"></div>
-    </section>
+    </div>
+    <div class="table-container">
+      <div class="table table-to-copy"></div>
+    </div>
+  </section>
 
-    <footer>
-      <div class="footer-content">
-        <span>
-          Made with <img src="./assets/svg/love-icon.svg" alt="" /> for the
-          amazing people.</span
-        >
+  <section class="excel-preview-section">
+    <div class="excel-preview-header">
+      <div class="preview-btn-grp">
+        <button class="btn back-btn excel-preview-close">
+          <img src="./assets/svg/back-icon.svg" alt="" />
+        </button>
+        <button class="btn reset-btn excel-preview-reset">
+          <img src="./assets/svg/refresh-icon.svg" alt="" />
+        </button>
       </div>
-    </footer>
 
-    <script src="./script/app.js" type="module" defer></script>
-    <!-- <script src="./script/auth.mjs"></script> -->
-  </body>
+      <div class="preview-title">Sheet edit</div>
+      <button class="btn save-btn excel-preview-save">
+        <img src="./assets/svg/save-icon.svg" alt="" />
+      </button>
+    </div>
+    <div id="previewInExcel"></div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <span>
+        Made with <img src="./assets/svg/love-icon.svg" alt="" /> for the
+        amazing people.</span>
+    </div>
+  </footer>
+
+  <script src="./script/app.js" type="module" defer></script>
+  <!-- <script src="./script/auth.mjs"></script> -->
+</body>
+
 </html>
